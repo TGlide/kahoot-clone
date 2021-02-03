@@ -1,5 +1,5 @@
 {
-  "name": "next-chakra-template",
+  "name": "kahoot-clone",
   "version": "1.0.0",
   "scripts": {
     "dev": "next",

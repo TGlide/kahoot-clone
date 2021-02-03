@@ -1,7 +1,7 @@
 <p align="center">
-  <h3 align="center">Next Chakra Template</h3>
+  <h3 align="center">Kahoot clone</h3>
   <p align="center">
-    A Next.js template using Chakra UI and typescript
+    Kahot clone built with Next JS, Chakra UI and Typescript
   </p>
   <p align="center">
     <a href="https://nextjs.org/">

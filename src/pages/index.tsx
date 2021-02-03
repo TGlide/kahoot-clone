@@ -9,7 +9,7 @@ const Index = () => {
     <Container size="lg" height="100vh">
       <Flex justifyContent="space-between" align="center" width="100%" py={4}>
         <Text fontSize="xl" fontWeight="700" color={theme.colors.teal[400]}>
-          Next Chakra Template
+          Kahoot Clone
         </Text>
         <Flex>
           <DarkModeSwitch />
