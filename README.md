@@ -1,27 +1,68 @@
-# Example app with [chakra-ui](https://github.com/chakra-ui/chakra-ui) and Typescript
+<p align="center">
+  <h3 align="center">Next Chakra Template</h3>
+  <p align="center">
+    A Next.js template using Chakra UI and typescript
+  </p>
+  <p align="center">
+    <a href="https://nextjs.org/">
+      <img src="https://img.shields.io/badge/frontend-Next.js-%23000000?style=for-the-badge&logo=next.js" alt="Built with Next.js">
+    </a>
+    <a href="https://www.typescriptlang.org/">
+      <img src="https://img.shields.io/badge/types-typescript-%23007ACC?style=for-the-badge&logo=typescript" alt="Built with Typescript">
+    </a>
+    <a href="https://chakra-ui.com/">
+      <img src="https://img.shields.io/badge/styling-Chakra UI-%23319795?style=for-the-badge" alt="Built with Chakra UI">
+    </a>
+  </p>
+</p>
 
-This example features how to use [chakra-ui](https://github.com/chakra-ui/chakra-ui) as the component library within a Next.js app with typescript.
+<!-- TABLE OF CONTENTS -->
 
-Next.js and chakra-ui have built-in TypeScript declarations, so we'll get autocompletion for their modules straight away.
+## Table of Contents
 
-We are connecting the Next.js `_app.js` with `chakra-ui`'s Provider and theme so the pages can have app-wide dark/light mode. We are also creating some components which shows the usage of `chakra-ui`'s style props.
+- [Table of Contents](#table-of-contents)
+  - [Built With](#built-with)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+  - [Run App](#run-app)
 
-## Deploy your own
+### Built With
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+- Frontend
+  - [Next JS](#319795)
+  - [Typescript](https://www.typescriptlang.org/)
+- Styling
+  - [Chakra UI](https://chakra-ui.com/)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-chakra-ui-typescript&project-name=with-chakra-ui-typescript&repository-name=with-chakra-ui-typescript)
+## Getting Started
 
-## How to use
+To get a local copy up and running follow these simple steps.
 
-### Using `create-next-app`
+### Prerequisites
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+`yarn` installed on your local machine.
 
-```bash
-npx create-next-app --example with-chakra-ui-typescript with-chakra-ui-typescript-app
-# or
-yarn create next-app --example with-chakra-ui-typescript with-chakra-ui-typescript-app
+### Installation
+
+1. Clone the repo
+
+```sh
+git clone https://github.com/TGlide/next-chakra-template.git
+cd next-chakra-template
 ```
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+2. Install Yarn dependencies
+
+```sh
+yarn
+```
+
+## Usage
+
+### Run App
+
+```sh
+yarn dev
+```
