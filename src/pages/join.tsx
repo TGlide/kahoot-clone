@@ -24,7 +24,7 @@ const Join = () => {
     setError(null);
     if (!games) return setError("Couldn't fetch games.");
     if (!Object.keys(games).includes(pin)) return setError("Invalid pin");
-    router.push(`lobby?game=${pin}`);
+    router.push(`game?pin=${pin}`);
   };
 
   return (

@@ -11,14 +11,58 @@ import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { useFirebase } from "../context/firebase";
 import firebase from "firebase";
-import { Game, Player } from "../entities/Game";
+import { Game, GameState, Player } from "../entities/Game";
 import { useCustomTheme } from "../theme";
 import { v4 as uuidv4 } from "uuid";
-import * as faker from "faker";
 import { twoWayBind } from "../utils/twoWayBind";
 
-const Lobby: React.FC = () => {
+interface LobbyProps {
+  playerRef: firebase.database.Reference;
+  otherPlayers: [string, Player][];
+}
+
+const Lobby: React.FC<LobbyProps> = ({ playerRef, otherPlayers }) => {
   const theme = useCustomTheme();
+  const [playerName, setPlayerName] = useState<string>("");
+
+  useEffect(
+    function updatePlayer() {
+      if (!playerRef) return;
+      playerRef.set({
+        points: 0,
+        screen_name: playerName,
+      });
+    },
+    [playerName]
+  );
+
+  return (
+    <Flex flexDir="column" alignItems="center">
+      <FormControl>
+        <FormLabel>Your name:</FormLabel>
+        <Input {...twoWayBind(playerName, setPlayerName)} />
+      </FormControl>
+      <Text fontWeight="600" mt={8}>
+        Other players:
+      </Text>
+      <SimpleGrid columns={3} spacing={8} w="100%" mt={4}>
+        {otherPlayers.map(([playerId, player]) => (
+          <Box
+            background={theme.colors.gray[700]}
+            boxShadow="md"
+            borderRadius={8}
+            key={playerId}
+            p={4}
+          >
+            {player.screen_name}
+          </Box>
+        ))}
+      </SimpleGrid>
+    </Flex>
+  );
+};
+
+const GameScreen: React.FC = () => {
   const router = useRouter();
   const { games, app } = useFirebase();
 
@@ -26,8 +70,7 @@ const Lobby: React.FC = () => {
   const [playerRef, setPlayerRef] = useState<
     firebase.database.Reference | undefined
   >();
-  const [playerName, setPlayerName] = useState<string>("");
-  const { game: gamePin } = router.query;
+  const { pin: gamePin } = router.query;
 
   useEffect(
     function getGame() {
@@ -44,9 +87,8 @@ const Lobby: React.FC = () => {
       if (!game || !app || playerRef) return;
       const newPlayer: Player = {
         points: 0,
-        screen_name: faker.name.findName(),
+        screen_name: "",
       };
-      setPlayerName(newPlayer.screen_name);
       const newPlayerId = uuidv4();
 
       const db = app.database();
@@ -75,17 +117,6 @@ const Lobby: React.FC = () => {
     [playerRef]
   );
 
-  useEffect(
-    function updatePlayer() {
-      if (!playerRef) return;
-      playerRef.set({
-        points: 0,
-        screen_name: playerName,
-      });
-    },
-    [playerName]
-  );
-
   const otherPlayers = useMemo(() => {
     if (!game?.players) return [];
     return Object.entries(game.players).filter(([id]) => id !== playerRef?.key);
@@ -94,29 +125,12 @@ const Lobby: React.FC = () => {
   if (!gamePin || !playerRef) return null;
 
   return (
-    <Flex flexDir="column" alignItems="center">
-      <FormControl>
-        <FormLabel>Your name:</FormLabel>
-        <Input {...twoWayBind(playerName, setPlayerName)} />
-      </FormControl>
-      <Text fontWeight="600" mt={8}>
-        Other players:
-      </Text>
-      <SimpleGrid columns={3} spacing={8} w="100%" mt={4}>
-        {otherPlayers.map(([playerId, player]) => (
-          <Box
-            background={theme.colors.gray[700]}
-            boxShadow="md"
-            borderRadius={8}
-            key={playerId}
-            p={4}
-          >
-            {player.screen_name}
-          </Box>
-        ))}
-      </SimpleGrid>
-    </Flex>
+    <>
+      {game?.state === GameState.WAITING && (
+        <Lobby {...{ playerRef, otherPlayers }} />
+      )}
+    </>
   );
 };
 
-export default Lobby;
+export default GameScreen;
