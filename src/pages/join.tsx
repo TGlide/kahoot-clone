@@ -5,27 +5,27 @@ import {
   PinInput,
   PinInputField,
   Text,
-} from "@chakra-ui/react";
-import { FormEvent, useState } from "react";
-import { useFirebase } from "../context/firebase";
-import { useCustomTheme } from "../theme";
-import { twoWayBind } from "../utils/twoWayBind";
-import { useRouter } from "next/router";
+} from "@chakra-ui/react"
+import { FormEvent, useState } from "react"
+import { useFirebase } from "../context/firebase"
+import { useCustomTheme } from "../theme"
+import { twoWayBind } from "../utils/twoWayBind"
+import { useRouter } from "next/router"
 
 const Join = () => {
-  const theme = useCustomTheme();
-  const { games } = useFirebase();
-  const router = useRouter();
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState<null | string>(null);
+  const theme = useCustomTheme()
+  const { games } = useFirebase()
+  const router = useRouter()
+  const [pin, setPin] = useState("")
+  const [error, setError] = useState<null | string>(null)
 
   const handleJoin = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-    if (!games) return setError("Couldn't fetch games.");
-    if (!Object.keys(games).includes(pin)) return setError("Invalid pin");
-    router.push(`game?pin=${pin}`);
-  };
+    e.preventDefault()
+    setError(null)
+    if (!games) return setError("Couldn't fetch games.")
+    if (!Object.keys(games).includes(pin)) return setError("Invalid pin")
+    router.push(`game?pin=${pin}`)
+  }
 
   return (
     <Flex flexDir="column" align="center">
@@ -53,7 +53,7 @@ const Join = () => {
         </Text>
       )}
     </Flex>
-  );
-};
+  )
+}
 
-export default Join;
+export default Join
