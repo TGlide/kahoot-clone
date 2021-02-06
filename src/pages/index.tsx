@@ -1,21 +1,16 @@
-import { Container, Flex, Text } from "@chakra-ui/react";
-import React from "react";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
-import { useCustomTheme } from "../theme";
+import { Button, Flex } from "@chakra-ui/react";
+import { useRouter } from "next/dist/client/router";
 
 const Index = () => {
-  const theme = useCustomTheme();
+  const router = useRouter();
+
   return (
-    <Container size="lg" height="100vh">
-      <Flex justifyContent="space-between" align="center" width="100%" py={4}>
-        <Text fontSize="xl" fontWeight="700" color={theme.colors.teal[400]}>
-          Kahoot Clone
-        </Text>
-        <Flex>
-          <DarkModeSwitch />
-        </Flex>
-      </Flex>
-    </Container>
+    <Flex flexDir="column" justify="center">
+      <Button>Host game</Button>
+      <Button onClick={() => router.push("join")} mt={4}>
+        Join game
+      </Button>
+    </Flex>
   );
 };
 
