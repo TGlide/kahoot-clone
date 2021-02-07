@@ -105,7 +105,7 @@ const GameScreen: React.FC = () => {
         }
       })
     },
-    [game, app, playerRef]
+    [game, app, playerRef, gamePin]
   )
 
   useEffect(
