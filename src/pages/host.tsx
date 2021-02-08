@@ -5,7 +5,7 @@ import { useFirebase } from "../context/firebase"
 import { Game, GameState } from "../entities/Game"
 import { useCustomTheme } from "../theme"
 
-const Host = () => {
+const Host = (): JSX.Element | null => {
   const { games, app } = useFirebase()
   const theme = useCustomTheme()
   const [gameRef, setGameRef] = useState<
