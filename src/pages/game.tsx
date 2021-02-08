@@ -11,30 +11,38 @@ import firebase from "firebase"
 import { useRouter } from "next/router"
 import { useEffect, useMemo, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
+import GamePrompt from "../components/GamePrompt"
 import { useFirebase } from "../context/firebase"
 import { Game, GameState, Player } from "../entities/Game"
 import { useCustomTheme } from "../theme"
 import { twoWayBind } from "../utils/twoWayBind"
 
 interface LobbyProps {
-  playerRef: firebase.database.Reference
-  otherPlayers: [string, Player][]
+  gameId: string
+  playerId: string
 }
 
-const Lobby = ({ playerRef, otherPlayers }: LobbyProps) => {
+const Lobby = ({ gameId, playerId }: LobbyProps) => {
+  const { games, gamesRef } = useFirebase()
   const theme = useCustomTheme()
   const [playerName, setPlayerName] = useState<string>("")
 
   useEffect(
     function updatePlayer() {
-      if (!playerRef) return
-      playerRef.set({
-        points: 0,
-        screen_name: playerName,
-      })
+      if (!gamesRef) return
+      const playerNameRef = gamesRef?.child(
+        `${gameId}/players/${playerId}/screen_name`
+      )
+      playerNameRef.set(playerName)
     },
-    [playerName, playerRef]
+    [gameId, gamesRef, playerId, playerName]
   )
+
+  const otherPlayers = useMemo(() => {
+    const game = games?.[gameId]
+    if (!game?.players) return []
+    return Object.entries(game.players).filter(([id]) => id !== playerId)
+  }, [gameId, games, playerId])
 
   return (
     <Flex flexDir="column" alignItems="center">
@@ -64,12 +72,9 @@ const Lobby = ({ playerRef, otherPlayers }: LobbyProps) => {
 
 const GameScreen: React.FC = () => {
   const router = useRouter()
-  const { games, app } = useFirebase()
-
+  const { games, app, gamesRef } = useFirebase()
   const [game, setGame] = useState<Game | undefined>()
-  const [playerRef, setPlayerRef] = useState<
-    firebase.database.Reference | undefined
-  >()
+  const [playerId, setPlayerId] = useState<string | undefined>()
   const { pin: gamePin } = router.query
 
   useEffect(
@@ -84,50 +89,46 @@ const GameScreen: React.FC = () => {
 
   useEffect(
     function handleGameConnection() {
-      if (!game || !app || playerRef) return
+      if (!game || !gamesRef || !app || playerId) return
       const newPlayer: Player = {
         points: 0,
         screen_name: "",
       }
       const newPlayerId = uuidv4()
+      setPlayerId(newPlayerId)
 
       const db = app.database()
       const amOnline = db.ref(".info/connected")
-      const newPlayerRef = app
-        .database()
-        .ref(`games/${gamePin}/players/${newPlayerId}`)
-      setPlayerRef(newPlayerRef)
+      const newPlayerRef = gamesRef.child(`${gamePin}/players/${newPlayerId}`)
 
       amOnline.on("value", (snapshot) => {
         if (snapshot.val()) {
-          newPlayerRef.onDisconnect().remove()
+          // newPlayerRef.onDisconnect().remove()
           newPlayerRef.set(newPlayer)
         }
       })
     },
-    [game, app, playerRef, gamePin]
+    [game, app, gamePin, playerId, gamesRef]
   )
 
-  useEffect(
-    function setCleanup() {
-      return function cleanup() {
-        playerRef?.remove()
-      }
-    },
-    [playerRef]
-  )
+  // useEffect(
+  //   function setCleanup() {
+  //     return function cleanup() {
+  //       gamesRef?.child(`games/${gamePin}/players/${playerId}`)?.remove()
+  //     }
+  //   },
+  //   [gamePin, gamesRef, playerId]
+  // )
 
-  const otherPlayers = useMemo(() => {
-    if (!game?.players) return []
-    return Object.entries(game.players).filter(([id]) => id !== playerRef?.key)
-  }, [game, playerRef])
-
-  if (!gamePin || !playerRef) return null
+  if (!gamePin || !playerId) return null
 
   return (
     <>
       {game?.state === GameState.WAITING && (
-        <Lobby {...{ playerRef, otherPlayers }} />
+        <Lobby playerId={playerId} gameId={gamePin as string} />
+      )}
+      {game?.state === GameState.PLAYING && app && (
+        <GamePrompt gameId={gamePin as string} playerId={playerId} />
       )}
     </>
   )

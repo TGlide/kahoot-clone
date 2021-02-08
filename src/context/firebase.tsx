@@ -1,12 +1,13 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import firebase from "firebase";
-import { Game } from "../entities/Game";
+import { createContext, useContext, useEffect, useState } from "react"
+import firebase from "firebase"
+import { Game } from "../entities/Game"
 
 interface FirebaseProps {
+  gamesRef?: firebase.database.Reference
   games?: {
-    [key: string]: Game;
-  };
-  app?: firebase.app.App;
+    [key: string]: Game
+  }
+  app?: firebase.app.App
 }
 
 const firebaseConfig = {
@@ -18,50 +19,55 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MSG_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MSRMT_ID,
-};
+}
 
-const FirebaseContext = createContext<FirebaseProps>({});
+const FirebaseContext = createContext<FirebaseProps>({})
 
 export const FirebaseProvider: React.FC = ({ children }) => {
-  const [games, setGames] = useState<FirebaseProps["games"]>({});
-  const [fb, setFb] = useState<firebase.app.App | undefined>(undefined);
+  const [games, setGames] = useState<FirebaseProps["games"]>({})
+  const [gamesRef, setGamesRef] = useState<
+    firebase.database.Reference | undefined
+  >()
+
+  const [fb, setFb] = useState<firebase.app.App | undefined>(undefined)
 
   useEffect(
     function initializeFirebase() {
       if (!fb) {
-        setFb(firebase.apps?.[0] || firebase.initializeApp(firebaseConfig));
+        setFb(firebase.apps?.[0] || firebase.initializeApp(firebaseConfig))
       }
     },
     [fb]
-  );
+  )
 
   useEffect(
-    function getGames() {
-      if (!fb) return;
-      const db = firebase.database();
-      db.ref("games").on("value", (snapshot) => {
-        const data = snapshot.val();
-        setGames(data);
-      });
+    function setupValues() {
+      if (!fb) return
+      const db = firebase.database()
+      const newGamesRef = db.ref("games")
+      setGamesRef(newGamesRef)
+
+      newGamesRef.on("value", (snapshot) => {
+        const data = snapshot.val()
+        setGames(data)
+      })
     },
     [fb]
-  );
+  )
 
   return (
-    <FirebaseContext.Provider value={{ games, app: fb }}>
+    <FirebaseContext.Provider value={{ games, app: fb, gamesRef }}>
       {children}
     </FirebaseContext.Provider>
-  );
-};
+  )
+}
 
 export const useFirebase = () => {
-  const context = useContext(FirebaseContext);
+  const context = useContext(FirebaseContext)
 
   if (context === undefined) {
-    throw new Error(
-      "useAlert must be used within the AlertsProvider component"
-    );
+    throw new Error("useAlert must be used within the AlertsProvider component")
   }
 
-  return context;
-};
+  return context
+}
