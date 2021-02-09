@@ -9,14 +9,17 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react"
-import firebase from "firebase"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useFirebase } from "../context/firebase"
-import { Game, Player } from "../entities/Game"
+import { Game, GameState } from "../entities/Game"
 import { useCustomTheme } from "../theme"
 import { twoWayBind } from "../utils/twoWayBind"
 
 const prompts = [
+  {
+    emoji: "🚐👨🏻‍🦲🥽🧪💵",
+    title: "Breaking Bad",
+  },
   {
     emoji: "🚐👨🏻‍🦲🥽🧪💵",
     title: "Breaking Bad",
@@ -51,6 +54,12 @@ const HostView = ({ players, prompt, gameId }: HostViewProps) => {
     },
     [gameId, gamesRef, players]
   )
+
+  const handleLeaderboard = useCallback(() => {
+    if (!gamesRef) return
+    const gameRef = gamesRef?.child(gameId)
+    gameRef.child("state").set(GameState.LEADERBOARD)
+  }, [gameId, gamesRef])
 
   return (
     <>
@@ -99,6 +108,9 @@ const HostView = ({ players, prompt, gameId }: HostViewProps) => {
           </Box>
         ))}
       </SimpleGrid>
+      <Button onClick={handleLeaderboard} mt={8}>
+        Show Leaderboard
+      </Button>
     </>
   )
 }

@@ -3,6 +3,7 @@ import firebase from "firebase"
 import { useRouter } from "next/router"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import GamePrompt from "../components/GamePrompt"
+import Leaderboard from "../components/Leaderboard"
 import { useFirebase } from "../context/firebase"
 import { Game, GameState } from "../entities/Game"
 import { useCustomTheme } from "../theme"
@@ -56,15 +57,15 @@ const Host = (): JSX.Element | null => {
     [app, gameId, generateGamePin]
   )
 
-  useEffect(
-    function setCleanup() {
-      return function cleanup() {
-        if (!gameId) return
-        gamesRef?.child(gameId)?.remove()
-      }
-    },
-    [gameId, gamesRef]
-  )
+  // useEffect(
+  //   function setCleanup() {
+  //     return function cleanup() {
+  //       if (!gameId) return
+  //       gamesRef?.child(gameId)?.remove()
+  //     }
+  //   },
+  //   [gameId, gamesRef]
+  // )
 
   const handleReady = useCallback(() => {
     if (!gameId || !gamesRef) return
@@ -83,9 +84,9 @@ const Host = (): JSX.Element | null => {
           {gameId}
         </Text>
 
-        <Divider my={8} />
-
-        <Text textAlign="center">Players:</Text>
+        <Text textAlign="center" mt={8}>
+          Players:
+        </Text>
         <SimpleGrid columns={3} spacing={8} w="100%" mt={4}>
           {Object.entries(gamePlayers).map(([playerId, player]) => (
             <Box
@@ -107,7 +108,10 @@ const Host = (): JSX.Element | null => {
     )
   }
 
-  return <GamePrompt gameId={gameId} isHost />
+  if (games[gameId].state === GameState.PLAYING)
+    return <GamePrompt gameId={gameId} isHost />
+
+  return <Leaderboard gameId={gameId} isHost />
 }
 
 export default Host

@@ -7,11 +7,11 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react"
-import firebase from "firebase"
 import { useRouter } from "next/router"
 import { useEffect, useMemo, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import GamePrompt from "../components/GamePrompt"
+import Leaderboard from "../components/Leaderboard"
 import { useFirebase } from "../context/firebase"
 import { Game, GameState, Player } from "../entities/Game"
 import { useCustomTheme } from "../theme"
@@ -129,6 +129,9 @@ const GameScreen: React.FC = () => {
       )}
       {game?.state === GameState.PLAYING && app && (
         <GamePrompt gameId={gamePin as string} playerId={playerId} />
+      )}
+      {game?.state === GameState.LEADERBOARD && app && (
+        <Leaderboard gameId={gamePin as string} />
       )}
     </>
   )
